@@ -26,7 +26,7 @@ namespace RubenEjercicio.Controllers
 
         public IActionResult GetUsuarios()
         {
-
+            // 
             var usuarios = _context.Usuarios.ToList();
 
             return Ok(usuarios);
@@ -34,10 +34,10 @@ namespace RubenEjercicio.Controllers
         }
 
         [HttpPost]
-
         public IActionResult CrearUsuarios([FromBody] Usuarios usuarios)
         {
 
+            // verifico que el campo nombre del modelo usuarios no este vacio 
             if (string.IsNullOrEmpty(usuarios.Nombre))
             { 
                 return BadRequest("El nombre es obligatorio");
@@ -53,12 +53,14 @@ namespace RubenEjercicio.Controllers
                 return BadRequest("la edad debe ser mayor a 0 ");
             }
 
+            // verifica que el email sea valido: que tenga :  @, .com, etc
             if (string.IsNullOrWhiteSpace(usuarios.Email) ||
                         !Regex.IsMatch(usuarios.Email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
             {
                 return BadRequest("Email inválido");
             }
 
+            // fecha y hora en la creacion del usuario, datetime.now es la hora y fecha actual
             usuarios.FechaCreacion = DateTime.Now;
 
             _context.Usuarios.Add(usuarios);
@@ -74,7 +76,7 @@ namespace RubenEjercicio.Controllers
 
             if (usuario == null)
             {
-
+                // verifico que el usuario no este vacio o null
                 return NotFound("Usuario no encontrado"); // 404
             }
 
@@ -96,7 +98,7 @@ namespace RubenEjercicio.Controllers
             {
                 return NotFound("Usuario no encontrado"); // 404
             }
-
+            // actualiza los datos del usuario que recibe a traves del body
             usuarioExistente.Nombre = usuario.Nombre;
             usuarioExistente.Email = usuario.Email;
             usuarioExistente.Edad = usuario.Edad;
@@ -111,13 +113,14 @@ namespace RubenEjercicio.Controllers
 
         public IActionResult EliminarUsuario(int id)
         {
+            // busca dentro de la base de datos y de la tabla de usuarios el "id" que se va a eliminar 
             var usuario = _context.Usuarios.Find(id);
 
             if (usuario == null)
             {
                 return NotFound("Usuario no encontrado"); // 404
             }
-
+            
             _context.Usuarios.Remove(usuario); // elimina de la DB
             _context.SaveChanges();            // guarda cambios
 
